@@ -1,0 +1,6 @@
+0.10698
+1.07966
+-0.399086
+1.56612
+
+putting text after the matrix end doesnt affect its reading
