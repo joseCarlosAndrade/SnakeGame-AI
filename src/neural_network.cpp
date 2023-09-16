@@ -93,13 +93,13 @@ Eigen::MatrixXf NeuralNetwork::SingleNetwork::getData(NNData data_to_get) {
 //     Eigen::Map<Eigen::Matrix<float, this->_n_output, _n_input>> w_temp
 // }
 
-// flushes the current data to the temp file at data/temp/
-void NeuralNetwork::SingleNetwork::flushCurrentData() {
+// // flushes the current data to the temp file at data/temp/
+// void NeuralNetwork::SingleNetwork::flushCurrentData() {
 
-}
+// }
 
-// saves the best network so far at data/final
-void NeuralNetwork::SingleNetwork::saveBestNetwork() {
+// // saves the best network so far at data/final
+// void NeuralNetwork::SingleNetwork::saveBestNetwork() {
 
-}
+// }
 

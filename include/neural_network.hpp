@@ -19,8 +19,9 @@ typedef enum {WEIGHTS, BIAS} NNData;
 `AVERAGE_NEAR_BEST`: Takes a value that is in between the two, but closer to the best.
 `UNIFORM_CROSSOVER`: Takes the entire value from the networks but randomly picked one another. */
 typedef enum {AVERAGE, AVERAGE_NEAR_BEST, UNIFORM_CROSSOVER} CrossoverType;
-
 typedef enum {GET, SET, INCREASE, DECREASE} FitnessOperationType;
+
+typedef unsigned int CONTAINER_SIZE; // Defines the size of neural network container
 
 /* ### Single Network Data
     Represents a single brain (neural network) with only 2 layers so far: input and output. 
@@ -42,6 +43,7 @@ class SingleNetwork {
             _n_input(n_inputs),
             _n_output(n_outputs)
         {
+            thisFitness = 0;
 
             if (random) {
                 _w0 = Eigen::MatrixXf::Random(n_outputs, n_inputs)*2; // generates random values between -2 and 2
@@ -97,7 +99,7 @@ class SingleNetwork {
 
 };
 
-typedef unsigned int CONTAINER_SIZE; // Defines the size of neural network container
+
 
 /* Defines a container of network object. It holds CONTAINER_SIZE neural networks with it. It makes easier to
 handle several brains. */

@@ -16,6 +16,7 @@ Author: jota ce (Github: joseCarlosAndrade)
 #define FPS 30 // it is not the snake movements fps, because the inputs are also based on this fps
 
 
+
 typedef enum {RANDOM, NEURAL_NETWORK} snake_behavior;
 
 /* ### Game core class. 
@@ -50,6 +51,10 @@ class Game {
         unsigned int bestSnakesNumber; // number of snakes to be chosen as best players on each iteration 
 
         int deadSnakes; // number of dead snakes to end each iteration
+
+        int iterationCount; // number of iterations
+
+        std::string pathToSave;
         
     
     public:
@@ -72,10 +77,19 @@ class Game {
 
         void drawSnakes(int step, SnakeGame::Snake &snake, int i);
 
+
+        bool saveToFile(NeuralNetwork::SingleNetwork network);
+
         //TODO:
-        void makeSelection();
-        void doCrossover();
-        void resetSnakesAndNN();
+        // void makeSelection();
+        // void doCrossover();
+        // void resetSnakesAndNN();
 };
+
+typedef struct snakeProperties {
+    SnakeGame::Snake *snake;
+    int fitness;
+    int index;
+} SnakeProperties;
 
 #endif

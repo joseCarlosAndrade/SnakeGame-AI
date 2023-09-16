@@ -71,10 +71,13 @@ namespace SnakeGame
 
             // neural network functions
             std::vector<float> getInputs();
+            NeuralNetwork::SingleNetwork * getThisBrain();
             void setThisBrain(NeuralNetwork::SingleNetwork * single);
             void takeDecision();
             
     };
+
+
 
 }
 #endif

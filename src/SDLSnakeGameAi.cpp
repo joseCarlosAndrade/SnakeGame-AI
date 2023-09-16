@@ -14,6 +14,9 @@ Game::Game(NeuralNetwork::CONTAINER_SIZE n_s, SnakeGame::SNAKE_VIEW_AREA view, s
         snakeContainer = new NeuralNetwork::NetworkContainer(n_s, 27, 4);
         assert(snakeContainer != NULL);
 
+        iterationCount = 0;
+        pathToSave = "data/";
+
         // intializing game attributes
         running = 1;
         fullscreen = 0;
@@ -146,15 +149,35 @@ void Game::iterateOnce() {
         this->draw();
     }
 
-    // evaluate fitness from all snakes (choose best N_BEST_SNAKES)
+    // evaluate fitness from all snake neural networks (choose best N_BEST_SNAKES)
+    SnakeProperties *best_snake_structs[bestSnakesNumber];
+    for ( int j = 0; j < bestSnakesNumber; j ++) {
+        *best_snake_structs[j] = {NULL, 0, 0}; // initializing all with 0 and NULL
+    }
+    
+    for (int i = 0; i < bestSnakesNumber; i++) { 
+        int cur_index = 0;
+        for (auto sn : snakes) {
+            int this_fitness = sn.getThisBrain()->fitnessOperation(NeuralNetwork::GET); // all of this to access the snake brain fitness..
+            if (this_fitness > best_snake_structs[i]->fitness) {
+                *best_snake_structs[i] = {&sn, this_fitness, cur_index};
+            }
+            cur_index++;
+        }
+    }
 
-    // save networks from best 2 snakes on file
-
+    // save networks from best N_BEST_SNAKES snakes on file 
+    for ( int i = 0; i < bestSnakesNumber; i ++) saveToFile(*((best_snake_structs)[i]->snake->getThisBrain()));
     // do crossover with CROSSOVER_PROBABILITY and LEARNING_RATE to repopulate neural network container
 
     // deallocate snakes
     std::vector<SnakeGame::Snake>().swap(this->snakes);
     
+    iterationCount++;
+}
+
+bool Game::saveToFile(NeuralNetwork::SingleNetwork network) {
+    // save network to file
 }
 
 int Game::calculateFps() {

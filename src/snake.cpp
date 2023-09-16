@@ -18,7 +18,8 @@ void SnakeGame::GameObject::setPosition(int x, int y) {
 }
 
 // constructor, initializes a snake object.
-SnakeGame::Snake::Snake(int x, int y, int maxW, int maxH, bool isHead, bool own_food, int fx , int fy, SnakeGame::SNAKE_VIEW_AREA view ) 
+SnakeGame::Snake::Snake(int x, int y, int maxW, int maxH, bool isHead, bool own_food, int fx,
+         int fy, SnakeGame::SNAKE_VIEW_AREA view ) 
  {
     // sets initial position
     Snake::setPosition(x, y);
@@ -265,6 +266,11 @@ std::vector<float> SnakeGame::Snake::getInputs() {
 void SnakeGame::Snake::setThisBrain(NeuralNetwork::SingleNetwork* single) {
     snakeBrain = single;
 }
+
+NeuralNetwork::SingleNetwork * SnakeGame::Snake::getThisBrain() {
+    return snakeBrain;
+}
+
 
 void SnakeGame::Snake::takeDecision() {
     // changes dierction based on output from neural network
