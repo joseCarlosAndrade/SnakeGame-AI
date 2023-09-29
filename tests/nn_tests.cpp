@@ -86,7 +86,7 @@ int main(int argc, char ** argv) {
     // std::cout << final_time << std::endl;
     // std::string w_name_final = "data/temp/" + ;
 
-    std::string brain_path = "data/temp/brain_0_Fri_Sep_29_15-31-13_2023";
+    std::string brain_path = "data/temp/brain_0_Fri_Sep_29_15-31-13_2023.b";
     NeuralNetwork::SingleNetwork singleNetwork(27, 4);
     singleNetwork.fillMatrices(brain_path);
     std::cout << "file read: " << singleNetwork.getData(NeuralNetwork::WEIGHTS)

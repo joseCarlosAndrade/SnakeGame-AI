@@ -12,15 +12,11 @@
 #include<fstream>
 
 
-Game::Game(NeuralNetwork::CONTAINER_SIZE n_s, SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
+Game::Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
         unsigned int best_snake_number, int g_height, int g_width, int gw_squares, int gh_squares) 
-    : n_snakes(n_s), height(g_height), width(g_width), w_squares(gw_squares), h_squares(gh_squares), 
+    :  height(g_height), width(g_width), w_squares(gw_squares), h_squares(gh_squares), 
     snake_view(view), behavior(bh), bestSnakesNumber(best_snake_number)
     {
-        // initializing container of neural networks
-        snakeContainer = new NeuralNetwork::NetworkContainer(n_s, 27, 4);
-        assert(snakeContainer != NULL);
-
         iterationCount = 0;
         pathToSave = "data/";
 
@@ -29,6 +25,8 @@ Game::Game(NeuralNetwork::CONTAINER_SIZE n_s, SnakeGame::SNAKE_VIEW_AREA view, s
         fullscreen = 0;
         lastTime = 0;
         FPS = 10;
+
+        deadSnakes = 0;
 
         // snake map
         directionMap[0] = SnakeGame::RIGHT;
@@ -58,13 +56,21 @@ Game::~Game() {
 }
 
 // intantiates all snakes
-void Game::initSnakes() {
+void Game::initSnakes(NeuralNetwork::CONTAINER_SIZE n_s) {
+    
     // snakes boiiii (and their foods)
+    n_snakes = n_s;
+    deadSnakes = 0;
+
     std::srand(std::time(nullptr));
     int food_x, food_y;
 
     this->deadSnakes = 0;
     snakes.reserve(n_snakes);
+
+    // initializing container of neural networks
+    snakeContainer = new NeuralNetwork::NetworkContainer(n_snakes, 27, 4);
+    assert(snakeContainer != NULL);
 
     for ( int i = 0; i < n_snakes; i++) {
         food_x = std::rand() % w_squares;
@@ -163,7 +169,7 @@ void Game::updateSnakes() {
 }
 
 // main loop for one round
-void Game::iterateOnce() {
+void Game::iterateOnce(bool saveToFile) {
     //loop variables
     int drawTimer = 0;
     int snakeTimer = 0, lastSnakeTimer = 0;
@@ -222,36 +228,47 @@ void Game::iterateOnce() {
             cur_index++;
         }
     }
-    std::cout << "fitness evaluated" << std::endl;
-
-    auto time = std::chrono::system_clock::now();
-    std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
-    std::string final_time = std::ctime(&savingTime_t);
-    
-    for(auto &c : final_time) {
-        if (c == ' ') c = '_'; // replacing spaces with _ to avoid name errors
-        if (c == ':') c = '-';
+    std::cout << "fitness evaluated. Best snake and fitnes: " << std::endl;
+    for ( int i = 0; i < bestSnakesNumber; i++) {
+        std::cout << "Snake: " << best_snake_structs[i]->index << std::endl;
+        std::cout << "Fitness value: " << best_snake_structs[i]->fitness <<std::endl;
     }
-    // save networks from best N_BEST_SNAKES snakes on file 
-    for ( int i = 0; i < bestSnakesNumber; i ++) {
-        std::cout << "saving snake " << i << " to file" << std::endl;
-        NeuralNetwork::SingleNetwork *itBrain = best_snake_structs[i]->snake->getThisBrain();
-        // saveToFile(* itBrain );
 
-        std::string brain_name_str = "data/temp/brain_";
-        // brain_name_str.append("data/temp/brain_");
-        brain_name_str.append(std::to_string(i));
-        brain_name_str.append("_" + final_time);
+    if (saveToFile) {
 
-        std::cout << "file: " << brain_name_str << std::endl;
-        itBrain->saveNetworkToFile(brain_name_str);
+        auto time = std::chrono::system_clock::now();
+        std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
+        std::string final_time = std::ctime(&savingTime_t);
+        
+        for(auto &c : final_time) {
+            if (c == ' ') c = '_'; // replacing spaces with _ to avoid name errors
+            if (c == ':') c = '-';
+        }
+        // save networks from best N_BEST_SNAKES snakes on file 
+        for ( int i = 0; i < bestSnakesNumber; i ++) {
+            std::cout << "Saving snake " << i << " to file" << std::endl;
+            NeuralNetwork::SingleNetwork *itBrain = best_snake_structs[i]->snake->getThisBrain();
+            // saveToFile(* itBrain );
+
+            std::string brain_name_str = "data/temp/brain_";
+            // brain_name_str.append("data/temp/brain_");
+            brain_name_str.append(std::to_string(i));
+            brain_name_str.append("_" + final_time);
+            int newl = brain_name_str.find_first_of('\n');
+            brain_name_str.at(newl) = '.';
+            brain_name_str.append("b");
+
+            std::cout << "file: " << brain_name_str << std::endl;
+            itBrain->saveNetworkToFile(brain_name_str);
+        }
+        
+        // do crossover with CROSSOVER_PROBABILITY and LEARNING_RATE to repopulate neural network container
+
+        std::cout << "snake file saved" << std::endl;
     }
-     
-    // do crossover with CROSSOVER_PROBABILITY and LEARNING_RATE to repopulate neural network container
-
-    std::cout << "snake file saved" << std::endl;
     // deallocate snakes
     std::vector<SnakeGame::Snake>().swap(this->snakes);
+    delete snakeContainer;
     
     std::cout << "incrementing iteration count " << std::endl;
     iterationCount++;
@@ -354,27 +371,27 @@ void Game::drawSnakes(int step, SnakeGame::Snake &snake, int i) {
 }
 
 
-//   ignore
-// std::vector<float> in = snakes[0].getInputs();
-// int k =0 ;
-// std::cout << "what the first snake is seeing:" << std::endl <<  "distance from food x and y: ";
-// for ( int i = 0; i < snake_view*snake_view + 2; i++) {
+void Game::spawnSingleSnakeAI(std::string brain_file_path) {
+    deadSnakes = 0;
+
+    std::srand(std::time(nullptr));
+    int food_x, food_y;
+
+    // NeuralNetwork::SingleNetwork* singleNetwork = new NeuralNetwork::SingleNetwork(27, 4);
+    snakeContainer = new NeuralNetwork::NetworkContainer(1, 27, 4);
+    snakeContainer->getNeuralNetwork(0)->fillMatrices(brain_file_path);
+
+    if(brain_file_path != "!")
+    // singleNetwork->fillMatrices(brain_file_path);
     
-//     if ( i >1) {
-//         if(i ==2) std::cout << std::endl;
+    food_x = std::rand() % w_squares;
+    food_y = std::rand() % h_squares;
 
-//         if (k >=5) { std::cout << std::endl; k=0;}
-//         k++;
-//     }
-//     std::cout << in[i] << " ";
-//     // if ( i%snake_view == snake_view-1) std::cout
-// }
-// std::cout << std::endl << std::endl;
+    SnakeGame::Snake singleSnake(w_squares/2, h_squares/2, w_squares, h_squares, true, true, food_x, food_y, snake_view);
+    singleSnake.setThisBrain( snakeContainer->getNeuralNetwork(0) );
+    assert(singleSnake.getThisBrain() != NULL);
 
-// std::cout << "snake 1 output from neural network: " << std::endl;
-// auto output = snakeContainer->getNeuralNetwork(0)->calculateOutput(in);
-
-// for (int i = 0; i < 4; i++) {
-//     std::cout << output[i] << " ";
-// }
-// std::cout << std::endl;
+    snakes.push_back(singleSnake);
+    
+    // iterateOnce();
+}

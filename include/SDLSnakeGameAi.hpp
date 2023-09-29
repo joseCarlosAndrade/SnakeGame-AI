@@ -64,12 +64,12 @@ class Game {
         
     
     public:
-        Game(NeuralNetwork::CONTAINER_SIZE n_s, SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
+        Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
         unsigned int best_snake_number =1, int g_height = 500, int g_width = 500, int gw_squares = 25, int gh_squares = 25) ;
         ~Game();
 
         /* Initializes all snakes with random networks */
-        void initSnakes();
+        void initSnakes(NeuralNetwork::CONTAINER_SIZE n_s);
 
         /* Handles window & keyboard inputs */
         void input();
@@ -86,7 +86,7 @@ class Game {
         /* Does one single iteration of the training process.
         In other words, runs one single round with the pre defined game settings, saving the best networks
         through evolutionary algorithms. */
-        void iterateOnce();
+        void iterateOnce(bool saveToFile=true);
 
         int calculateFps(); // TODO: FIX THIS IT DOESNT MAKE ANY SENSE AND ITS CLEARLY NOT WORKING PROPERLY
 
@@ -95,6 +95,10 @@ class Game {
 
         /* Handles the snakes positioning (called from draw()) */
         void drawSnakes(int step, SnakeGame::Snake &snake, int i);
+
+        /* Spawns a single snake with the file path to the brain to be used.
+        If left as default, uses a random neural network */
+        void spawnSingleSnakeAI(std::string brain_file_path = "!");
 
 
         //TODO:

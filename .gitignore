@@ -34,3 +34,6 @@
 # local
 .vscode/
 bin/
+
+# brain files 
+*.b  
