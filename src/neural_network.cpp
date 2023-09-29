@@ -147,7 +147,7 @@ Eigen::MatrixXf NeuralNetwork::SingleNetwork::getData(NNData data_to_get) {
     }
 }
 
-unsigned int NeuralNetwork::SingleNetwork::fitnessOperation(FitnessOperationType operation, unsigned int operand=0) {
+unsigned int NeuralNetwork::SingleNetwork::fitnessOperation(FitnessOperationType operation, unsigned int operand) {
             switch (operation) {
                 case GET:
                     return thisFitness;

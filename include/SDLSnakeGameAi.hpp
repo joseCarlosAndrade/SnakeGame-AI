@@ -37,6 +37,7 @@ class Game {
         // loop variables
         bool running, fullscreen;
 
+        // sdl game variables
         int frameCount, timerFPS, lastFrame, fps;
         int lastTime;
 
@@ -67,11 +68,19 @@ class Game {
         unsigned int best_snake_number =1, int g_height = 500, int g_width = 500, int gw_squares = 25, int gh_squares = 25) ;
         ~Game();
 
+        /* Initializes all snakes with random networks */
         void initSnakes();
 
+        /* Handles window & keyboard inputs */
         void input();
+
+        /* Updates everything on the screen (frame) */
         void update();
+
+        /* Updates all snakes (it's called in update()) */
         void updateSnakes();
+
+        /* Puts eveything that has been updated into the screen */
         void draw();
 
         /* Does one single iteration of the training process.
@@ -81,12 +90,12 @@ class Game {
 
         int calculateFps(); // TODO: FIX THIS IT DOESNT MAKE ANY SENSE AND ITS CLEARLY NOT WORKING PROPERLY
 
+        /* Handles the food positioning (called from draw()) */
         void drawFood(int step, SnakeGame::Food * food);
 
+        /* Handles the snakes positioning (called from draw()) */
         void drawSnakes(int step, SnakeGame::Snake &snake, int i);
 
-
-        bool saveToFile(NeuralNetwork::SingleNetwork &network);
 
         //TODO:
         // void makeSelection();
@@ -94,7 +103,7 @@ class Game {
         // void resetSnakesAndNN();
 };
 
-/* Data type to handle snake selection */
+/* Data type to handle snake fitness selection */
 typedef struct snakeProperties {
     SnakeGame::Snake *snake;
     int fitness;

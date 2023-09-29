@@ -257,34 +257,6 @@ void Game::iterateOnce() {
     iterationCount++;
 }
 
-bool Game::saveToFile(NeuralNetwork::SingleNetwork &network) {
-    // save network to file
-
-    // separating brain in folders
-
-    std::fstream brain_file;
-
-
-    // getting current time
-    auto time = std::chrono::system_clock::now();
-    std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
-    std::string final_time = std::ctime(&savingTime_t);
-    
-    for(auto &c : final_time) if (c == ' ') c = '_'; // replacing spaces with _ to avoid name errors
-
-    std::string brain_name_str = "data/temp/brain_" + final_time;
-    brain_file.open(brain_name_str, std::ios::in);
-    
-    if(!brain_file) {
-        std::cout << "ERROR: Could not open/create file. Exiting." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
- 
- 
-    
-    return true;
-}
 
 int Game::calculateFps() {
     lastFrame = SDL_GetTicks();
