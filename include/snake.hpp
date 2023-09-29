@@ -38,6 +38,7 @@ namespace SnakeGame
     class Snake : public GameObject {
         private:
             int maxW, maxH;
+            int size;
             SNAKE_VIEW_AREA snakeView;
             Direction snakeDirection;
             Food* thisFood;

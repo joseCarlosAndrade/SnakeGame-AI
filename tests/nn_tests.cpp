@@ -1,5 +1,10 @@
 #include<iostream>
 #include"../include/neural_network.hpp"
+#include<ctime>
+
+// #include <chrono>
+// #include <thread>
+#include<unistd.h>
 
 // #define SINGLE
 #define MULTIPLE
@@ -31,8 +36,43 @@ int main(int argc, char ** argv) {
 
     #else
     std::cout << "Initializing container of neural network " << std::endl;
-    NeuralNetwork::NetworkContainer container(4, 3, 3);
-    container.printAllNetworks();
+    // NeuralNetwork::NetworkContainer container(4, 3, 3);
+
+    NeuralNetwork::NetworkContainer container(1000, 27, 4);
+
+    // for ( int i = 0 ; i < 100; i++)
+    // {
+    //     NeuralNetwork::SingleNetwork* network = new NeuralNetwork::SingleNetwork(27, 3, true);
+
+    //     container.setNeuralNetwork(i, network);
+    // }
+    // container.printAllNetworks();
+    std::srand(std::time(nullptr));
+    std::vector<float> inputs;
+    inputs.reserve(27);
+    for (int i = 0 ; i < 27; i++) {
+        inputs.push_back(0);
+    } 
+
+    while(true) {
+        std::cout << "s: " ;
+        for (int i = 0 ; i < 27; i++) {
+            inputs[i] = std::rand() % 100;
+        } 
+        int i = 0;
+        for (auto &network : container.getNeuralNetworks()) {
+            auto outputs = network->calculateOutput(inputs);
+            std::cout << i++ << ": ";
+
+            for(auto e : outputs) {
+                std::cout << e << " ";
+            }
+            std::cout << std::endl;
+        }
+        // std::this_thread::sleep_for(std::chrono::nanoseconds(100));
+        usleep(1000000 / 3);
+        
+    }
     #endif
 
 

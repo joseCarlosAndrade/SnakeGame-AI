@@ -13,10 +13,12 @@ Author: jota ce (Github: joseCarlosAndrade)
 #include"snake.hpp"
 #include<ctime>
 
-#define FPS 30 // it is not the snake movements fps, because the inputs are also based on this fps
+//#define FPS 10 // it is not the snake movements fps, because the inputs are also based on this fps
 
 
-
+/* Defines the snake behavior.
+`RANDOM` random movements from all snakes
+`NEURAL_NETWORK` each snake will take decision about its direction from the neural network */
 typedef enum {RANDOM, NEURAL_NETWORK} snake_behavior;
 
 /* ### Game core class. 
@@ -30,6 +32,7 @@ class Game {
         SDL_Window * window;
         int width, height, w_squares, h_squares;
         int universal_s;
+        int FPS;
 
         // loop variables
         bool running, fullscreen;
@@ -47,6 +50,8 @@ class Game {
         NeuralNetwork::NetworkContainer *snakeContainer; // container that stores all snakes neural networks
 
         SnakeGame::SNAKE_VIEW_AREA snake_view; // odd number that represents the size of the area that the snake can view
+
+        std::map<int , SnakeGame::Direction> directionMap; // map that translate the neural network ouput to snake directions
 
         unsigned int bestSnakesNumber; // number of snakes to be chosen as best players on each iteration 
 
@@ -66,19 +71,22 @@ class Game {
 
         void input();
         void update();
-        void updateSnakes(snake_behavior mode);
+        void updateSnakes();
         void draw();
 
+        /* Does one single iteration of the training process.
+        In other words, runs one single round with the pre defined game settings, saving the best networks
+        through evolutionary algorithms. */
         void iterateOnce();
 
-        int calculateFps();
+        int calculateFps(); // TODO: FIX THIS IT DOESNT MAKE ANY SENSE AND ITS CLEARLY NOT WORKING PROPERLY
 
         void drawFood(int step, SnakeGame::Food * food);
 
         void drawSnakes(int step, SnakeGame::Snake &snake, int i);
 
 
-        bool saveToFile(NeuralNetwork::SingleNetwork network);
+        bool saveToFile(NeuralNetwork::SingleNetwork &network);
 
         //TODO:
         // void makeSelection();
@@ -86,6 +94,7 @@ class Game {
         // void resetSnakesAndNN();
 };
 
+/* Data type to handle snake selection */
 typedef struct snakeProperties {
     SnakeGame::Snake *snake;
     int fitness;

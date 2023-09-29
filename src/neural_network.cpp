@@ -18,12 +18,12 @@ Eigen::MatrixXf NeuralNetwork::SingleNetwork::calculateOutput(Eigen::MatrixXf in
     for ( int i = 0; i < output.rows(); i ++) {
         output(i, 0) =  pow(EULER, output(i, 0)) / sum;
     }
-            
+    
     return output;
 }
 
 std::vector<float> NeuralNetwork::SingleNetwork::calculateOutput(std::vector<float> input) {
-    assert(input.size() == _n_input);
+    assert(input.size() ==  (unsigned long int) _n_input);
 
     Eigen::MatrixXf input_e(input.size(), 1);
     
@@ -34,7 +34,7 @@ std::vector<float> NeuralNetwork::SingleNetwork::calculateOutput(std::vector<flo
     Eigen::MatrixXf output = calculateOutput(input_e);
 
     std::vector<float> output_e;
-    output_e.reserve(output.size());
+    // output_e.reserve(output.size());
 
     for(int i =0; i < output.size(); i++) {
         output_e.push_back(output(i, 0));

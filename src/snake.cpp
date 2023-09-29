@@ -33,6 +33,7 @@ SnakeGame::Snake::Snake(int x, int y, int maxW, int maxH, bool isHead, bool own_
     this->snakeDirection = RIGHT;
     this->isHead = isHead;
     this->state = SnakeGame::ALIVE;
+    this->size = 2;
 
     if (isHead)
         this->nxtSnake = new SnakeGame::Snake(x-1, y, maxW, maxH, false);
@@ -70,8 +71,10 @@ void SnakeGame::Snake::setSnakeDirection(Direction direction) {
     case SnakeGame::RIGHT:
         if (direction == SnakeGame::LEFT) return;
         break;
-    }
     
+    default:
+        std::cout << "DIRECTION ERROR" << std::endl;
+    }
     this->snakeDirection = direction;
 }
 
@@ -187,6 +190,8 @@ SnakeGame::SnakeState SnakeGame::Snake::checkCollision() {
     // if head touched food
     if (this->isHead && this->x == thisFood->x && this->y == thisFood->y) {
         this->addSnake();
+        this->size++;
+
         std::srand(std::time(nullptr));
         int x, y;
         do {  
@@ -244,7 +249,7 @@ std::vector<float> SnakeGame::Snake::getInputs() {
 
     auto thisSnake = this;
 
-    while (1)  {
+    for(int i = 0; i < this->size; i++)  {
         int x_c = thisSnake->getX() - this->getX() + d;
         int y_c = thisSnake->getY() - this->getY() + d;
         
@@ -256,6 +261,7 @@ std::vector<float> SnakeGame::Snake::getInputs() {
     
     // mat.transposeInPlace(); // transpose because eigen uses column > row order for indexing by default, which is not what i want
     for ( int i = 0; i < snakeView*snakeView; i ++) {
+
         // if (i==d*snakeView+d) continue; // skips head position, since it will always be a body part, its not necessary to feed nn with it
         inputs.push_back(mat(i));
     }
@@ -273,21 +279,33 @@ NeuralNetwork::SingleNetwork * SnakeGame::Snake::getThisBrain() {
 
 
 void SnakeGame::Snake::takeDecision() {
-    // changes dierction based on output from neural network
-    auto output = snakeBrain->calculateOutput(this->getInputs());
-    int greater = 0;
-    float greaterNum = 0;
-    for (int i = 0; i<4; i++) {
-        if (output[i] > greaterNum) {
-            greaterNum = output[i];
-            greater = i;
+    // changes direction based on output from neural network
+    try {
+        auto output = snakeBrain->calculateOutput(this->getInputs());
+        int greater = 0;
+        float greaterNum = 0;
+        for (int i = 0; i<4; i++) {
+            if (output[i] > greaterNum) {
+                greaterNum = output[i];
+                greater = i;
+            }
         }
+        // std::cout << "outputs:  ";
+        // for (auto i : output) std::cout << i<< " ";
+        // std::cout  << std::endl;
+        // std::cout << "decision took: "<< directionMap[greater] << std::endl << std::endl;
+        this->setSnakeDirection(directionMap[greater]);
+
+        std::vector<float>().swap(output); // frees output vector
+
     }
-    std::cout << "outputs:  ";
-    for (auto i : output) std::cout << i<< " ";
-    std::cout  << std::endl;
-    std::cout << "decision took: "<< directionMap[greater] << std::endl << std::endl;
-    this->setSnakeDirection(directionMap[greater]);
+    catch (char * exception) {
+        std::cout << "ERRROR -  Caught: " << exception << std::endl;
+    }
+    catch (...) {
+        std::cout << "Default exception." << std::endl;
+    }
+
 }
 
 

@@ -79,7 +79,7 @@ class SingleNetwork {
                     return thisFitness;
                 
                 case SET:
-                    if (operand < 0) return 0; // prevents from setting fitness to below zero numbers
+                    // if (operand < 0) return 0; // prevents from setting fitness to below zero numbers
                     thisFitness = operand;
                     return 1;
 
@@ -88,8 +88,8 @@ class SingleNetwork {
                     return 1;
                 
                 case DECREASE:
-                    if (thisFitness - operand < 0) thisFitness = 0;
-                    else 
+                    // if (thisFitness - operand < 0) thisFitness = 0;
+                    // else 
                         thisFitness -= operand;
                     return 1;
                 default:
@@ -124,7 +124,7 @@ class NetworkContainer {
             // assert(size_t!=0);
 
             networks.reserve(size_t);
-            for (int i = 0; i < size_t; i++) {
+            for (uint i = 0; i < size_t; i++) {
                 networks.push_back(new SingleNetwork(n_inputs, n_outputs)); // initializes each network randomly
 
             }  
@@ -140,16 +140,20 @@ class NetworkContainer {
         }
 
         /* Setter */
-        void setNeuralNetwork(int index, SingleNetwork* network) {
-            assert(index >= 0 && index < n_networks);
+        void setNeuralNetwork(uint index, SingleNetwork* network) {
+            assert(index < n_networks);
             networks.at(index) = network;
         }
 
         /* Returns a pointer to the network from the `index` position on the container. */
-        SingleNetwork * getNeuralNetwork(int index) {
-            assert(index >= 0 && index <n_networks);
+        SingleNetwork * getNeuralNetwork(uint index) {
+            assert(index <n_networks);
 
             return networks[index];
+        }
+
+        std::vector<NeuralNetwork::SingleNetwork*> getNeuralNetworks() {
+            return networks;
         }
         
         /* Prints all network. For debugging pourpose, I do not recommend to use in real implementations, but it may be
@@ -168,14 +172,14 @@ class NetworkContainer {
         }
 
         /* Does crossover from the specified type on the entire container with the `bestNetworks` container passed as argument. */
-        void doCrossover(NetworkContainer bestNetworks, CrossoverType type = AVERAGE) {
+        // void doCrossover(NetworkContainer bestNetworks, CrossoverType type = AVERAGE) {
+            
+        // }   
 
-        }   
+        // /* Mutates the entire container with the mutation factor `mutation_p`. */
+        // void mutateContainer(float mutation_p) {
 
-        /* Mutates the entire container with the mutation factor `mutation_p`. */
-        void mutateContainer(float mutation_p) {
-
-        } 
+        // } 
         
 };
 
