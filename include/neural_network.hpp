@@ -5,6 +5,9 @@
 #include<iostream>
 #include<vector>
 
+#include<chrono>
+#include<ctime>
+
 #define EULER 2.71828
 
 typedef unsigned int fitness_value;
@@ -65,6 +68,9 @@ class SingleNetwork {
 
         /* Fills the weight and bias matrices from the given files */
         void fillMatrices(std::string w_file_name, std::string b_file_name);
+    
+        /* Fills the weight and bias matrices from the given brain file */
+        void fillMatrices(std::string brain_file_name);
 
         // void flushCurrentData();
         // void saveBestNetwork();
@@ -72,30 +78,11 @@ class SingleNetwork {
         /* Gets the requested data from the network */
         Eigen::MatrixXf getData(NNData data_to_get);
 
-        /* Intermediate to allow the specified fitness operation type. */
-        unsigned int fitnessOperation(FitnessOperationType operation, unsigned int operand=0) {
-            switch (operation) {
-                case GET:
-                    return thisFitness;
-                
-                case SET:
-                    // if (operand < 0) return 0; // prevents from setting fitness to below zero numbers
-                    thisFitness = operand;
-                    return 1;
+        /* Save the current brain on the specified path and file name */
+        bool saveNetworkToFile(std::string path_to_file);
 
-                case INCREASE:
-                    thisFitness += operand;
-                    return 1;
-                
-                case DECREASE:
-                    // if (thisFitness - operand < 0) thisFitness = 0;
-                    // else 
-                        thisFitness -= operand;
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
+        /* Intermediate to allow the specified fitness operation type. */
+        unsigned int fitnessOperation(FitnessOperationType operation, unsigned int operand=0);
 
 };
 

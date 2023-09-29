@@ -1,6 +1,7 @@
 #include<iostream>
 #include"../include/neural_network.hpp"
 #include<ctime>
+#include<chrono>
 
 // #include <chrono>
 // #include <thread>
@@ -47,32 +48,49 @@ int main(int argc, char ** argv) {
     //     container.setNeuralNetwork(i, network);
     // }
     // container.printAllNetworks();
-    std::srand(std::time(nullptr));
-    std::vector<float> inputs;
-    inputs.reserve(27);
-    for (int i = 0 ; i < 27; i++) {
-        inputs.push_back(0);
-    } 
+    // std::srand(std::time(nullptr));
+    // std::vector<float> inputs;
+    // inputs.reserve(27);
+    // for (int i = 0 ; i < 27; i++) {
+    //     inputs.push_back(0);
+    // } 
 
-    while(true) {
-        std::cout << "s: " ;
-        for (int i = 0 ; i < 27; i++) {
-            inputs[i] = std::rand() % 100;
-        } 
-        int i = 0;
-        for (auto &network : container.getNeuralNetworks()) {
-            auto outputs = network->calculateOutput(inputs);
-            std::cout << i++ << ": ";
+    // while(true) {
+    //     std::cout << "s: " ;
+    //     for (int i = 0 ; i < 27; i++) {
+    //         inputs[i] = std::rand() % 100;
+    //     } 
+    //     int i = 0;
+    //     for (auto &network : container.getNeuralNetworks()) {
+    //         auto outputs = network->calculateOutput(inputs);
+    //         std::cout << i++ << ": ";
 
-            for(auto e : outputs) {
-                std::cout << e << " ";
-            }
-            std::cout << std::endl;
-        }
-        // std::this_thread::sleep_for(std::chrono::nanoseconds(100));
-        usleep(1000000 / 3);
+    //         for(auto e : outputs) {
+    //             std::cout << e << " ";
+    //         }
+    //         std::cout << std::endl;
+    //     }
+    //     // std::this_thread::sleep_for(std::chrono::nanoseconds(100));
+    //     usleep(1000000 / 3);
         
-    }
+    // }
+
+    // auto time = std::chrono::system_clock::now();
+    // std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
+    // std::string final_time = std::ctime(&savingTime_t);
+
+    // for(auto &c : final_time) {
+    //     if (c == ' ') c='_';
+    // }
+
+    // std::cout << final_time << std::endl;
+    // std::string w_name_final = "data/temp/" + ;
+
+    std::string brain_path = "data/temp/brain_0_Fri_Sep_29_15-31-13_2023";
+    NeuralNetwork::SingleNetwork singleNetwork(27, 4);
+    singleNetwork.fillMatrices(brain_path);
+    std::cout << "file read: " << singleNetwork.getData(NeuralNetwork::WEIGHTS)
+    << std::endl << "bias: " << singleNetwork.getData(NeuralNetwork::BIAS) << std::endl;
     #endif
 
 

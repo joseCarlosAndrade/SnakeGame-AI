@@ -4,7 +4,12 @@
 #include"../include/snake.hpp"
 #include"../include/SDLSnakeGameAi.hpp"
 #include<map>
+
+//timing handling
 #include<unistd.h>
+#include<ctime>
+#include<chrono>
+#include<fstream>
 
 
 Game::Game(NeuralNetwork::CONTAINER_SIZE n_s, SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
@@ -185,36 +190,6 @@ void Game::iterateOnce() {
         if (snakeTimer - lastSnakeTimer >= fps/6 && snakeTimer > FPS + 10) {
             std::cout << "updating all of them:" <<std::endl;
 
-            // int i = 0;
-            // usleep(1000000*2);
-
-            // for(int i = 0; i < n_snakes; i ++) {
-                // std::cout << "nn : " << i << " "; 
-                // auto network = snakeContainer->getNeuralNetwork(i);
-            // for (auto &network : snakeContainer->getNeuralNetworks()) {
-                
-                // if (snakes[i].state != SnakeGame::DEAD) {
-                //     auto inputs = snakes[i].getInputs(); // PROBLEM IS HERE
-                //     // std::vector<float> inputs;
-                //     // for ( int o = 0; o < 27; o++) {
-                //     //     inputs.push_back(std::rand() % 10);
-
-                //     // }
-                //     auto outputs = network->calculateOutput(inputs);
-                //     for ( auto e : inputs) {
-                //         std::cout << e << " ";
-                //     }
-                //     std::cout << std::endl;
-                    
-                // }
-                // auto outputs = network->calculateOutput(inputs);
-                // std::cout << i++ << ": ";
-    
-                
-                // std::cout << std::endl;
-                // i++;
-                // }
-
 
             this->updateSnakes();
  
@@ -230,11 +205,7 @@ void Game::iterateOnce() {
 
     // evaluate fitness from all snake neural networks (choose best N_BEST_SNAKES)
     SnakeProperties *best_snake_structs[100];
-    // for ( int j = 0; j < bestSnakesNumber; j ++) {
-        // std::cout << "creating property for snake: " << j << std::endl;
-        // (best_snake_structs)[j] = {NULL, 0, 0}; // initializing all with 0 and NULL   
-        // best_snake_structs[j]->fitness = 0; // intializing all fitness as 0
-    // }
+
     std::cout << "struct created" << std::endl;
 
     
@@ -253,11 +224,27 @@ void Game::iterateOnce() {
     }
     std::cout << "fitness evaluated" << std::endl;
 
+    auto time = std::chrono::system_clock::now();
+    std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
+    std::string final_time = std::ctime(&savingTime_t);
+    
+    for(auto &c : final_time) {
+        if (c == ' ') c = '_'; // replacing spaces with _ to avoid name errors
+        if (c == ':') c = '-';
+    }
     // save networks from best N_BEST_SNAKES snakes on file 
     for ( int i = 0; i < bestSnakesNumber; i ++) {
         std::cout << "saving snake " << i << " to file" << std::endl;
         NeuralNetwork::SingleNetwork *itBrain = best_snake_structs[i]->snake->getThisBrain();
-        saveToFile(* itBrain );
+        // saveToFile(* itBrain );
+
+        std::string brain_name_str = "data/temp/brain_";
+        // brain_name_str.append("data/temp/brain_");
+        brain_name_str.append(std::to_string(i));
+        brain_name_str.append("_" + final_time);
+
+        std::cout << "file: " << brain_name_str << std::endl;
+        itBrain->saveNetworkToFile(brain_name_str);
     }
      
     // do crossover with CROSSOVER_PROBABILITY and LEARNING_RATE to repopulate neural network container
@@ -273,7 +260,29 @@ void Game::iterateOnce() {
 bool Game::saveToFile(NeuralNetwork::SingleNetwork &network) {
     // save network to file
 
-    // weights
+    // separating brain in folders
+
+    std::fstream brain_file;
+
+
+    // getting current time
+    auto time = std::chrono::system_clock::now();
+    std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
+    std::string final_time = std::ctime(&savingTime_t);
+    
+    for(auto &c : final_time) if (c == ' ') c = '_'; // replacing spaces with _ to avoid name errors
+
+    std::string brain_name_str = "data/temp/brain_" + final_time;
+    brain_file.open(brain_name_str, std::ios::in);
+    
+    if(!brain_file) {
+        std::cout << "ERROR: Could not open/create file. Exiting." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+ 
+ 
+    
     return true;
 }
 
