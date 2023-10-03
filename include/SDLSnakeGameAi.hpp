@@ -50,6 +50,8 @@ class Game {
 
         NeuralNetwork::NetworkContainer *snakeContainer; // container that stores all snakes neural networks
 
+        NeuralNetwork::NetworkContainer *nextSnakeContainer; // container that stores all snakes neural network for the next iteration
+
         SnakeGame::SNAKE_VIEW_AREA snake_view; // odd number that represents the size of the area that the snake can view
 
         std::map<int , SnakeGame::Direction> directionMap; // map that translate the neural network ouput to snake directions
@@ -60,7 +62,9 @@ class Game {
 
         int iterationCount; // number of iterations
 
-        std::string pathToSave;
+        std::string lastBrain;
+
+        std::string pathToSave; 
         
     
     public:

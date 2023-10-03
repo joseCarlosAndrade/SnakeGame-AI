@@ -20,7 +20,7 @@ typedef enum {WEIGHTS, BIAS} NNData;
 /* Crossover type. 
 `AVERAGE`: takes the average of the two values.
 `AVERAGE_NEAR_BEST`: Takes a value that is in between the two, but closer to the best.
-`UNIFORM_CROSSOVER`: Takes the entire value from the networks but randomly picked one another. */
+`UNIFORM_CROSSOVER`: Takes the entire value from the networks node randomly picked between the two. */
 typedef enum {AVERAGE, AVERAGE_NEAR_BEST, UNIFORM_CROSSOVER} CrossoverType;
 typedef enum {GET, SET, INCREASE, DECREASE} FitnessOperationType;
 
@@ -38,7 +38,7 @@ class SingleNetwork {
     
     public:
         
-        SingleNetwork();
+        SingleNetwork() ;
 
         /* Initializes a single network with the given input and output numbers. If the matrices won't 
         be loaded ou defined externaly, use random=true to initialize it with random values between -2,2. */
@@ -66,6 +66,9 @@ class SingleNetwork {
         number of inputs and outputs defined on the network. */
         std::vector<float> calculateOutput(std::vector<float> input);
 
+        /* Copy the `n_network` neural network data passed as parameter */
+        void copyNetwork(NeuralNetwork::SingleNetwork n_network);
+
         /* Fills the weight and bias matrices from the given files */
         void fillMatrices(std::string w_file_name, std::string b_file_name);
     
@@ -78,17 +81,58 @@ class SingleNetwork {
         /* Gets the requested data from the network */
         Eigen::MatrixXf getData(NNData data_to_get);
 
+        Eigen::MatrixXf& getW();
+
+        Eigen::MatrixXf& getB();
+
+        /* Mutate this single network with the specified parameters */
+        void mutateThisNetwork(float mutation_f=0.1, float max_change=0.1);
+
         /* Save the current brain on the specified path and file name */
         bool saveNetworkToFile(std::string path_to_file);
 
         /* Intermediate to allow the specified fitness operation type. */
         unsigned int fitnessOperation(FitnessOperationType operation, unsigned int operand=0);
 
+        /* Assignment operation between networks. */
+        // void operator=(SingleNetwork &op) {
+        //     assert(op._n_input == _n_input && op._n_output == _n_output);
+        //     _w0 = op._w0;
+        //     _b0 = op._b0;
+        // }
+
+        /* Sum operation between networks. */
+        SingleNetwork operator+(SingleNetwork op) {
+            assert(op._n_input == _n_input && op._n_output == _n_output);
+
+            SingleNetwork single (_n_input, _n_output);
+
+            single._w0 = _w0+op._w0;
+            single._b0 = _b0+op._b0;
+
+            return single;
+            
+        }
+
+        /* Division by float operation. */
+        SingleNetwork operator/(float op) {
+
+            SingleNetwork single(_n_input, _n_output);
+
+            // single._w0 = _w0/op;
+            // single._b0 = _b0/op;
+
+            single.getB() = this->getB()/op;
+            single.getW() = this->getW()/op;
+
+            return single;
+            
+        }
+
 };
 
-
-
-/* Defines a container of network object. It holds CONTAINER_SIZE neural networks with it. It makes easier to
+/* ## Network Container
+Defines a container of network object. It holds `CONTAINER_SIZE` neural networks with it. It makes easier to
 handle several brains. */
 class NetworkContainer {
     private:
@@ -158,15 +202,48 @@ class NetworkContainer {
             }
         }
 
-        /* Does crossover from the specified type on the entire container with the `bestNetworks` container passed as argument. */
-        // void doCrossover(NetworkContainer bestNetworks, CrossoverType type = AVERAGE) {
+        /* Does crossover from the specified type on the entire container with the `bestNetwork` network passed as argument.
+        The results are outputed on the target `targetContainer`, a network container that has to be initialized and also
+        must have the same size as the source container. */
+        void doCrossover(SingleNetwork bestNetwork, NetworkContainer* targetContainer, CrossoverType type = NeuralNetwork::AVERAGE) {
+            assert(targetContainer!=NULL && this->n_networks == targetContainer->n_networks);
+
+            if (type == NeuralNetwork::AVERAGE) {
+                
+                // int index = 0;
+                for( auto oNetwork : targetContainer->getNeuralNetworks()) { // iterating throught target network
+                    // *oNetwork = ; 
+                    oNetwork->copyNetwork(*oNetwork + bestNetwork);
+                    oNetwork->copyNetwork(*oNetwork /2);
+                    // *oNetwork = *oNetwork/2;
+
+                }
+            }
+            // to be implemented yet
+            else if (type == NeuralNetwork::AVERAGE_NEAR_BEST) {
+
+            }
+            else if(type == NeuralNetwork::UNIFORM_CROSSOVER) {
+
+            }
             
-        // }   
 
-        // /* Mutates the entire container with the mutation factor `mutation_p`. */
-        // void mutateContainer(float mutation_p) {
+        }   
 
-        // } 
+        /* Mutates the entire container with the mutation factor `mutation_factor` applying a `max_change` mutation. 
+        The `mutation_factor` stands for the rate that the crossover will happen. E.g.: Saying that
+        the mutation factor is 0.08 (8%) means that approximately 8% of each network will experience mutation,
+        with a maximum change of each weight of `max_change`. */
+        void mutateContainer(float mutation_f=0.1, float max_change=0.1) {
+            std::srand(std::time(nullptr));
+
+            for(auto network : networks) {
+                if(network==NULL) continue;
+
+                network->mutateThisNetwork(mutation_f, max_change);
+            }
+
+        } 
         
 };
 

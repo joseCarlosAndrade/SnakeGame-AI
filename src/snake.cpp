@@ -187,10 +187,12 @@ SnakeGame::SnakeState SnakeGame::Snake::checkCollision(SnakeGame::Food* food) {
 
 // handle collision in general for its own food (overload so it can run with multiple instances of snakes)
 SnakeGame::SnakeState SnakeGame::Snake::checkCollision() {
+
     // if head touched food
     if (this->isHead && this->x == thisFood->x && this->y == thisFood->y) {
         this->addSnake();
         this->size++;
+        this->getThisBrain()->fitnessOperation(NeuralNetwork::INCREASE, 10);
 
         std::srand(std::time(nullptr));
         int x, y;

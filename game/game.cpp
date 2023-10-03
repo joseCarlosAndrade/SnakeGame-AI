@@ -10,7 +10,7 @@ int main(int argc, char ** argv) {
 
     if (argc < 2) { 
         // default brain
-        game.spawnSingleSnakeAI("data/temp/brain_0_Fri_Sep_29_15-50-21_2023.b");
+        game.spawnSingleSnakeAI("data/temp/brain_0_Fri_Sep_29_23-00-10_2023.b");
         saveToFile = false;
     }
     else if (argc == 2) {

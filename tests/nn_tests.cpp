@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
     std::cout << "Initializing container of neural network " << std::endl;
     // NeuralNetwork::NetworkContainer container(4, 3, 3);
 
-    NeuralNetwork::NetworkContainer container(1000, 27, 4);
+    // NeuralNetwork::NetworkContainer container(1000, 27, 4);
 
     // for ( int i = 0 ; i < 100; i++)
     // {
@@ -85,12 +85,24 @@ int main(int argc, char ** argv) {
 
     // std::cout << final_time << std::endl;
     // std::string w_name_final = "data/temp/" + ;
+    NeuralNetwork::NetworkContainer container(1, 27, 4);
 
-    std::string brain_path = "data/temp/brain_0_Fri_Sep_29_15-31-13_2023.b";
+    std::cout << "Original and initial container: " << std::endl;
+    container.printAllNetworks();
+
+    std::string brain_path = "data/temp/brain_0_Fri_Sep_29_23-00-10_2023.b";
     NeuralNetwork::SingleNetwork singleNetwork(27, 4);
     singleNetwork.fillMatrices(brain_path);
-    std::cout << "file read: " << singleNetwork.getData(NeuralNetwork::WEIGHTS)
+    std::cout << "File read: " <<std::endl << singleNetwork.getData(NeuralNetwork::WEIGHTS)
     << std::endl << "bias: " << singleNetwork.getData(NeuralNetwork::BIAS) << std::endl;
+
+    container.doCrossover(singleNetwork, &container, NeuralNetwork::AVERAGE);
+    std::cout << "With crossover: " << std::endl;
+    container.printAllNetworks();
+
+    container.mutateContainer(0.5 ,0.4); // mutation rate and max change
+    std::cout << "With mutation: " << std::endl;
+    container.printAllNetworks();
     #endif
 
 

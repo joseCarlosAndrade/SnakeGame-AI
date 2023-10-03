@@ -43,6 +43,19 @@ std::vector<float> NeuralNetwork::SingleNetwork::calculateOutput(std::vector<flo
     return output_e;
 }
 
+Eigen::MatrixXf& NeuralNetwork::SingleNetwork::getW() {
+    return this->_w0;
+}
+
+Eigen::MatrixXf& NeuralNetwork::SingleNetwork::getB() {
+    return this->_b0;
+}
+
+void NeuralNetwork::SingleNetwork::copyNetwork(NeuralNetwork::SingleNetwork n_network) {
+    _w0 = n_network.getW();
+    _b0 = n_network.getB();
+}
+
 // fill neural network from file
 void NeuralNetwork::SingleNetwork::fillMatrices(std::string w_file_name, std::string b_file_name) {
     // assert(w_file_name!= NULL && b_file_name && NULL);
@@ -144,6 +157,52 @@ Eigen::MatrixXf NeuralNetwork::SingleNetwork::getData(NNData data_to_get) {
         break;
     default:
         return this->_w0;
+    }
+}
+
+void NeuralNetwork::SingleNetwork::mutateThisNetwork(float mutation_f, float max_change) {
+    for (int i = 0; i < _w0.rows(); i++) {
+        for (int j = 0; j< _w0.cols(); j++) {
+
+            // mutate only mutation_f % of times
+            float rate = std::rand()%100+1;
+            // std::cout << "rate and mutation f: " << rate << " " << mutation_f*100 << " " << (rate <=mutation_f*100) << std::endl; 
+            if (rate <= mutation_f*100) {
+                // mutation
+                // -4 -3 -2 -1 0 1 2 3 4
+                //                   3
+                int c = max_change*200;
+                float change = (float)(std::rand()% c);
+
+                change -= max_change*100;
+                change /= 100;
+                // std::cout  << "changing with value: " << change << std::endl;
+                
+                _w0(i, j) += change;
+            }
+        }
+
+    }
+
+    for (int i = 0; i < _b0.rows(); i++) {
+        for (int j = 0; j< _b0.cols(); j++) {
+
+            // mutate only mutation_f % of times
+            auto rate = std::rand()%100;
+            if (rate <=(int) mutation_f*100) {
+                // mutation
+                // -4 -3 -2 -1 0 1 2 3 4
+                //                   3
+
+                int change = (std::rand()% ((int)max_change*200));
+                change -= max_change*100;
+                change /= 100;
+                std::cout  << "changing with value: " << change << std::endl;
+                
+                _b0(i, j) += change;
+            }
+        }
+
     }
 }
 
