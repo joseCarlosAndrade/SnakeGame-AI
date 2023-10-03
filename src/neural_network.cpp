@@ -165,14 +165,15 @@ void NeuralNetwork::SingleNetwork::mutateThisNetwork(float mutation_f, float max
         for (int j = 0; j< _w0.cols(); j++) {
 
             // mutate only mutation_f % of times
-            float rate = std::rand()%100+1;
+            float rate = (std::rand()%100 )+1;
+            
             // std::cout << "rate and mutation f: " << rate << " " << mutation_f*100 << " " << (rate <=mutation_f*100) << std::endl; 
             if (rate <= mutation_f*100) {
                 // mutation
                 // -4 -3 -2 -1 0 1 2 3 4
                 //                   3
                 int c = max_change*200;
-                float change = (float)(std::rand()% c);
+                float change = (float)(std::rand()% c) ;
 
                 change -= max_change*100;
                 change /= 100;
@@ -188,16 +189,18 @@ void NeuralNetwork::SingleNetwork::mutateThisNetwork(float mutation_f, float max
         for (int j = 0; j< _b0.cols(); j++) {
 
             // mutate only mutation_f % of times
-            auto rate = std::rand()%100;
-            if (rate <=(int) mutation_f*100) {
+            // mutate only mutation_f % of times
+            float rate = (std::rand()%100 )+1;
+            if (rate <= mutation_f*100) {
                 // mutation
                 // -4 -3 -2 -1 0 1 2 3 4
                 //                   3
 
-                int change = (std::rand()% ((int)max_change*200));
+                int c = max_change*200;
+                float change = (float)(std::rand()% c) ;
+
                 change -= max_change*100;
                 change /= 100;
-                std::cout  << "changing with value: " << change << std::endl;
                 
                 _b0(i, j) += change;
             }

@@ -85,7 +85,7 @@ int main(int argc, char ** argv) {
 
     // std::cout << final_time << std::endl;
     // std::string w_name_final = "data/temp/" + ;
-    NeuralNetwork::NetworkContainer container(1, 27, 4);
+    NeuralNetwork::NetworkContainer container(2, 27, 4);
 
     std::cout << "Original and initial container: " << std::endl;
     container.printAllNetworks();
@@ -100,7 +100,7 @@ int main(int argc, char ** argv) {
     std::cout << "With crossover: " << std::endl;
     container.printAllNetworks();
 
-    container.mutateContainer(0.5 ,0.4); // mutation rate and max change
+    container.mutateContainer(0.8 ,0.4); // mutation rate and max change
     std::cout << "With mutation: " << std::endl;
     container.printAllNetworks();
     #endif

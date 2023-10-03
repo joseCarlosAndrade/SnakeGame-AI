@@ -222,46 +222,50 @@ void Game::iterateOnce(bool saveToFile) {
 
     // evaluate fitness from all snake neural networks (choose best N_BEST_SNAKES)
     // SnakeProperties *best_snake_structs[100];
-    SnakeProperties * best_snake_structs = new SnakeProperties[100];
-    for (int i = 0; i < bestSnakesNumber; i++) {
-        best_snake_structs[i].fitness = 0;
-        best_snake_structs[i].index = -1;
-        
-    }
+    // SnakeProperties * best_snake_structs = new SnakeProperties[100];
 
+    // std::vector<SnakeProperties> best_snake_structs;
+// 
+    // for (int i = 0; i < bestSnakesNumber; i++) {
+        // best_snake_structs[i] = {0, -1};
+        // 
+    // }
 
     std::cout << "struct created" << std::endl;
 
-    int cur_index=0;
+    int max_index=-1;
     int this_fitness=0;
+    int max_fitness = 0;
     for (int i = 0; i < bestSnakesNumber; i++) { 
-        cur_index = 0;
+        int cur_index = 0;
         for (auto sn : snakes) {
             this_fitness = sn.getThisBrain()->fitnessOperation(NeuralNetwork::GET); // all of this to access the snake brain fitness..
-            std::cout << "f: " <<  this_fitness << "; ";
-            if (this_fitness > best_snake_structs[i].fitness) {
+            // std::cout << "f: " <<  this_fitness << "; ";
+            if (this_fitness > max_fitness) {
                 std::cout << std::endl << "best found: " <<  this_fitness << "; " << std::endl;
                 // *best_snake_structs[i] = {&sn, this_fitness, cur_index};
-                best_snake_structs[i].snake = &sn;
-                best_snake_structs[i].fitness = this_fitness;
-                best_snake_structs[i].index = cur_index;
+                // best_snake_structs[i].snake = &sn;
+                // best_snake_structs[i].fitness = this_fitness;
+                // best_snake_structs[i].index = cur_index;
+                max_fitness = this_fitness;
+                max_index = cur_index;         
             }
+
             cur_index++;
         }
     }
-    std::cout << "fitness evaluated. Best snake and fitnes: " << std::endl;
+    std::cout << "fitness evaluated. Best snake and fitness: (i) " << bestSnakesNumber << std::endl;
     for ( int i = 0; i < bestSnakesNumber; i++) {
-        std::cout << "Snake index: " << best_snake_structs[i].index << std::endl;
-        std::cout << "Fitness value: " << best_snake_structs[i].fitness <<std::endl;
+        std::cout << "Snake index: " << max_index << std::endl;
+        std::cout << "Fitness value: " << max_fitness <<std::endl;
     }
 
-    NeuralNetwork::SingleNetwork *itBrain_ = new NeuralNetwork::SingleNetwork(27, 4); // brain to be used in crossover TODO: implement crossover with multiple brains
-
-    if (saveToFile) {
-
+    NeuralNetwork::SingleNetwork itBrain_(27,4);
+    if (saveToFile && max_index != -1) {
         auto time = std::chrono::system_clock::now();
         std::time_t savingTime_t = std::chrono::system_clock::to_time_t(time);
         std::string final_time = std::ctime(&savingTime_t);
+        
         
         for(auto &c : final_time) {
             if (c == ' ') c = '_'; // replacing spaces with _ to avoid name errors
@@ -272,7 +276,9 @@ void Game::iterateOnce(bool saveToFile) {
         // save networks from best N_BEST_SNAKES snakes on file 
         for ( int i = 0; i < bestSnakesNumber; i ++) {
             // std::cout << "Saving snake " << i << " to file" << std::endl;
-            NeuralNetwork::SingleNetwork *itBrain = best_snake_structs[i].snake->getThisBrain();
+            // itBrain_ = *(best_snake_structs[i].snake->getThisBrain());
+
+            itBrain_.copyNetwork(*(snakes.at(max_index).getThisBrain() ));
             // saveToFile(* itBrain );
 
             std::string brain_name_str = "data/temp/brain_";
@@ -286,25 +292,36 @@ void Game::iterateOnce(bool saveToFile) {
             lastBrain = brain_name_str;
 
             std::cout << "file: " << brain_name_str << std::endl;
-            itBrain->saveNetworkToFile(brain_name_str);
-            itBrain_->copyNetwork(*itBrain);
+            itBrain_.saveNetworkToFile(brain_name_str);
+            // itBrain_.copyNetwork(*itBrain);
         }
         
         // do crossover with CROSSOVER_PROBABILITY and LEARNING_RATE to repopulate neural network container
        
         std::cout << "snake file saved" << std::endl;
-    }
-    if (iterationCount == 0) {
-        nextSnakeContainer = new NeuralNetwork::NetworkContainer(n_snakes, 27, 4);
-    }
-    snakeContainer->doCrossover(*itBrain_, nextSnakeContainer, NeuralNetwork::AVERAGE);
-    nextSnakeContainer->mutateContainer(0.1, 0.1);
 
+    }
+    NeuralNetwork::NetworkContainer * n_container;
+
+    if ( max_index != -1) {
+        if (iterationCount == 0) {
+            n_container = new NeuralNetwork::NetworkContainer(n_snakes, 27, 4);
+        }
+
+        std::cout << "Doing crossover : " << std::endl;
+
+        snakeContainer->doCrossover(itBrain_, n_container, NeuralNetwork::AVERAGE);
+
+        std::cout << "Mutating: " << std::endl; 
+        n_container->mutateContainer(0.1, 0.1);
+    }
 
     // deallocate snakes
     std::vector<SnakeGame::Snake>().swap(this->snakes);
     delete snakeContainer;
-    delete best_snake_structs;
+    // delete best_snake_structs;
+    if (max_index != -1)
+        delete n_container;
     
     std::cout << "incrementing iteration count " << std::endl;
     iterationCount++;

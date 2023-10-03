@@ -111,11 +111,11 @@ class Game {
         // void resetSnakesAndNN();
 };
 
-/* Data type to handle snake fitness selection */
-typedef struct snakeProperties {
-    SnakeGame::Snake *snake;
-    int fitness;
-    int index;
-} SnakeProperties;
+// /* Data type to handle snake fitness selection */
+// typedef struct snakeProperties {
+//     int fitness;
+//     int index;
+//     SnakeGame::Snake *snake;
+// } SnakeProperties;
 
 #endif
