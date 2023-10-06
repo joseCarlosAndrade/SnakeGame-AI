@@ -14,7 +14,8 @@ Author: jota ce (Github: joseCarlosAndrade)
 #include<ctime>
 
 //#define FPS 10 // it is not the snake movements fps, because the inputs are also based on this fps
-
+#define SNAKE_INPUTS 28
+#define SNAKE_OUTPUTS 4
 
 /* Defines the snake behavior.
 `RANDOM` random movements from all snakes
@@ -35,7 +36,8 @@ class Game {
         int FPS;
 
         // loop variables
-        bool running, fullscreen;
+        bool running, fullscreen, stopSimulation;
+        int maxIterations;
 
         // sdl game variables
         int frameCount, timerFPS, lastFrame, fps;
@@ -62,15 +64,17 @@ class Game {
 
         int iterationCount; // number of iterations
 
-        std::string lastBrain;
+        std::string lastBrain; // path to the last brain saved
 
-        std::string pathToSave; 
+        std::string pathToSave; // path to save current brain
         
     
     public:
         Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
         unsigned int best_snake_number =1, int g_height = 500, int g_width = 500, int gw_squares = 25, int gh_squares = 25) ;
         ~Game();
+
+        void setMaxIterations(int iterations);
 
         /* Initializes all snakes with random networks */
         void initSnakes(NeuralNetwork::CONTAINER_SIZE n_s);
@@ -90,7 +94,12 @@ class Game {
         /* Does one single iteration of the training process.
         In other words, runs one single round with the pre defined game settings, saving the best networks
         through evolutionary algorithms. */
-        void iterateOnce(bool saveToFile=true);
+        bool iterateOnce(bool saveToFile=true);
+
+        /* Plays the game! It uses the specified settings so far, such as snake numbers,
+        max iteration count, crossover type, mutation and so on.
+        Please make sure to specify a maximum iteration count before calling this method. */
+        void playGame(uint n_snakes );
 
         int calculateFps(); // TODO: FIX THIS IT DOESNT MAKE ANY SENSE AND ITS CLEARLY NOT WORKING PROPERLY
 

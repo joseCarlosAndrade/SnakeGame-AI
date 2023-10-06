@@ -80,7 +80,7 @@ class SingleNetwork {
 
         /* Gets the requested data from the network */
         Eigen::MatrixXf getData(NNData data_to_get);
-
+        
         Eigen::MatrixXf& getW();
 
         Eigen::MatrixXf& getB();
@@ -93,13 +93,6 @@ class SingleNetwork {
 
         /* Intermediate to allow the specified fitness operation type. */
         unsigned int fitnessOperation(FitnessOperationType operation, unsigned int operand=0);
-
-        /* Assignment operation between networks. */
-        // void operator=(SingleNetwork &op) {
-        //     assert(op._n_input == _n_input && op._n_output == _n_output);
-        //     _w0 = op._w0;
-        //     _b0 = op._b0;
-        // }
 
         /* Sum operation between networks. */
         SingleNetwork operator+(SingleNetwork op) {
@@ -206,7 +199,8 @@ class NetworkContainer {
         The results are outputed on the target `targetContainer`, a network container that has to be initialized and also
         must have the same size as the source container. */
         void doCrossover(SingleNetwork bestNetwork, NetworkContainer* targetContainer, CrossoverType type = NeuralNetwork::AVERAGE) {
-            assert(targetContainer!=NULL && this->n_networks == targetContainer->n_networks);
+            assert(targetContainer!=NULL );
+            // assert(this->n_networks >= targetContainer->n_networks);
 
             if (type == NeuralNetwork::AVERAGE) {
                 

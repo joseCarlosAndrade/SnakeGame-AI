@@ -1,7 +1,10 @@
 CPP_FLAGS=-ggdb -Wall -Werror -Wextra
 
-all: game/game.cpp neural_network.o SDLSnakeGameAi.o snake.o 
-	g++ -o bin/mainGame game/game.cpp bin/*.o -lSDL2 $(CPP_FLAGS)
+all: game/training.cpp neural_network.o SDLSnakeGameAi.o snake.o 
+	g++ -o bin/mainGame game/training.cpp bin/*.o -lSDL2 $(CPP_FLAGS)
+
+debug: game/game.cpp neural_network.o SDLSnakeGameAi.o snake.o 
+	g++ -o bin/debug game/game.cpp bin/*.o -lSDL2 $(CPP_FLAGS)
 
 neural_network.o: src/neural_network.cpp include/neural_network.hpp
 	g++ -c src/neural_network.cpp -o bin/neural_network.o

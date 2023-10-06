@@ -3,6 +3,10 @@
 #include<cstdlib>
 #include<eigen3/Eigen/Dense>
 
+#define SNAKE_INPUTS 28
+#define SNAKE_OUTPUTS 4
+
+
 int SnakeGame::GameObject::getX() {
     return this->x;
 }
@@ -264,9 +268,10 @@ std::vector<float> SnakeGame::Snake::getInputs() {
     // mat.transposeInPlace(); // transpose because eigen uses column > row order for indexing by default, which is not what i want
     for ( int i = 0; i < snakeView*snakeView; i ++) {
 
-        // if (i==d*snakeView+d) continue; // skips head position, since it will always be a body part, its not necessary to feed nn with it
         inputs.push_back(mat(i));
     }
+
+    inputs.push_back(this->snakeDirection);
 
     return inputs;
 }
@@ -286,7 +291,7 @@ void SnakeGame::Snake::takeDecision() {
         auto output = snakeBrain->calculateOutput(this->getInputs());
         int greater = 0;
         float greaterNum = 0;
-        for (int i = 0; i<4; i++) {
+        for (int i = 0; i< SNAKE_OUTPUTS; i++) {
             if (output[i] > greaterNum) {
                 greaterNum = output[i];
                 greater = i;

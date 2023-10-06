@@ -10,7 +10,7 @@ int main(int argc, char ** argv) {
 
     if (argc < 2) { 
         // default brain
-        game.spawnSingleSnakeAI("data/temp/brain_0_Fri_Sep_29_23-00-10_2023.b");
+        game.spawnSingleSnakeAI("data/final/brain_0_Tue_Oct__3_14-21-56_2023.b");
         saveToFile = false;
     }
     else if (argc == 2) {
@@ -19,12 +19,13 @@ int main(int argc, char ** argv) {
         chars.insert(0, argv[1]);
 
         // number of snakes
-        if (chars.length() < 10) {
+        if (chars.length() < 7) {
             number_of_snakes = atoi (argv[1]);
+            
             game.initSnakes(number_of_snakes);
         }
         else {
-            std::string path = "data/temp/";
+            std::string path = "data/final/";
             game.spawnSingleSnakeAI( path + chars);
             saveToFile = false;
         }
