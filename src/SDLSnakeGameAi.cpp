@@ -318,7 +318,12 @@ bool Game::iterateOnce(bool saveToFile) {
     if ( max_index != -1 && saveToFile) {
         nextSnakeContainer == nullptr;
         if (iterationCount == 0) {
+            
             nextSnakeContainer = new NeuralNetwork::NetworkContainer(n_snakes, SNAKE_INPUTS,SNAKE_OUTPUTS);
+            if(nextSnakeContainer==NULL) {
+                std::cerr << "Bad allocation on next container. Exiting..." << std::endl;
+                exit(EXIT_FAILURE);
+            }
         }
 
         std::cout << "Doing crossover.. " << std::endl;
@@ -333,12 +338,6 @@ bool Game::iterateOnce(bool saveToFile) {
 
     // deallocate snakes
     std::vector<SnakeGame::Snake>().swap(this->snakes);
-
-    
-    
-    // delete best_snake_structs;
-    // if (max_index != -1)
-        // delete n_container;
     
     std::cout << std::endl << "Incrementing iteration count " << std::endl;
     iterationCount++;
