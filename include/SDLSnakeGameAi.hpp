@@ -14,8 +14,10 @@ Author: jota ce (Github: joseCarlosAndrade)
 #include<ctime>
 
 //#define FPS 10 // it is not the snake movements fps, because the inputs are also based on this fps
-#define SNAKE_INPUTS 28
-#define SNAKE_OUTPUTS 4
+#define SNAKE_INPUTS 28 // number of inputs
+#define SNAKE_OUTPUTS 4 // number of outputs
+
+#define SNAKE_TIMEOUT 100 // seconds that a snake can be alive without getting food
 
 /* Defines the snake behavior.
 `RANDOM` random movements from all snakes

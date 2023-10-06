@@ -97,12 +97,16 @@ void Game::initSnakes(NeuralNetwork::CONTAINER_SIZE n_s) {
         }
     }
 
+    Uint32 nowTime = SDL_GetTicks();
+
     for ( int i = 0; i < n_snakes; i++) {
         food_x = std::rand() % w_squares;
         food_y = std::rand() % h_squares;
         SnakeGame::Snake c_snake(w_squares/2, h_squares/2, w_squares, h_squares, true, true, food_x, food_y, snake_view);
         c_snake.setThisBrain(snakeContainer->getNeuralNetwork(i));
         assert(c_snake.getThisBrain() != NULL);
+
+        c_snake.setSnakeTimer(nowTime);
         snakes.push_back(c_snake);
     }
 }
@@ -137,7 +141,7 @@ void Game::updateSnakes() {
         SnakeGame::Direction thisDirecion;
 
         int i =0;
-        // for(auto& snake : snakes) {
+        Uint32 nowTimer = SDL_GetTicks();
 
         for ( std::vector<SnakeGame::Snake>::iterator it = snakes.begin(); it != snakes.end() ; it++) {
             
@@ -161,15 +165,25 @@ void Game::updateSnakes() {
             }
             else {
                 // 
-                snake->takeDecision();
 
+                snake->takeDecision();
                 }
 
             if (snake->state!=SnakeGame::DEAD) {
                 snake->moveAllSnakes();
-                snake->checkCollision();
 
-                // std::cout << " OPS! THIS DIED ";
+                // if the snake ate a food, reset its timer
+                if (snake->checkCollision() == SnakeGame::GROWING)
+                    snake->setSnakeTimer(SDL_GetTicks());
+
+                // timeout for each snake
+                Uint32 timePassed = nowTimer - snake->getSnakeTimer();
+                if( (timePassed)>= SNAKE_TIMEOUT*1000 && timePassed <SNAKE_TIMEOUT*10000) {
+                    snake->state = SnakeGame::DEAD;
+                    // std::cout << "Snake died due to timeout : " << (nowTimer - snake->getSnakeTimer())/1000 << std::endl;
+                }
+                    
+
                 if(snake->state==SnakeGame::DEAD) {
                     this->deadSnakes++;
                     snake->changeAllStates();
@@ -178,7 +192,6 @@ void Game::updateSnakes() {
 
         }   
 
-        //std::cout << " !!! updated all snakes!!!!  ";
    
 }
 
@@ -230,16 +243,15 @@ bool Game::iterateOnce(bool saveToFile) {
 
             lastSnakeTimer = snakeTimer;
         }
-        //std::cout << "Drawing snakes: " ;
         this->draw();
-        //std::cout << n_snakes - this->deadSnakes << " snakes drawn." << std::endl;
     }
-    // std::cout << "loop terminated " << std::endl;
 
+    // evaluating fitness
 
     int max_index=-1;
     int this_fitness=0;
     int max_fitness = 0;
+
     for (int i = 0; i < bestSnakesNumber; i++) { 
         int cur_index = 0;
         for (auto sn : snakes) {
@@ -247,10 +259,7 @@ bool Game::iterateOnce(bool saveToFile) {
             // std::cout << "f: " <<  this_fitness << "; ";
             if (this_fitness > max_fitness) {
                 std::cout << "Best found-> " <<  this_fitness << "; " << std::endl;
-                // *best_snake_structs[i] = {&sn, this_fitness, cur_index};
-                // best_snake_structs[i].snake = &sn;
-                // best_snake_structs[i].fitness = this_fitness;
-                // best_snake_structs[i].index = cur_index;
+
                 max_fitness = this_fitness;
                 max_index = cur_index;         
             }
@@ -258,7 +267,8 @@ bool Game::iterateOnce(bool saveToFile) {
             cur_index++;
         }
     }
-    // std::cout << "fitness evaluated. Best snake and fitness: (i) " << bestSnakesNumber << std::endl;
+
+    // showing best fitness
     for ( int i = 0; i < bestSnakesNumber; i++) {
         std::cout <<std::endl <<  "Snake index: " << max_index << std::endl;
         std::cout << "Fitness value: " << max_fitness <<std::endl;
@@ -279,9 +289,6 @@ bool Game::iterateOnce(bool saveToFile) {
 
         // save networks from best N_BEST_SNAKES snakes on file 
         for ( int i = 0; i < bestSnakesNumber; i ++) {
-            // std::cout << "Saving snake " << i << " to file" << std::endl;
-            // itBrain_ = *(best_snake_structs[i].snake->getThisBrain());
-
             itBrain_.copyNetwork(*(snakes.at(max_index).getThisBrain() ));
             // saveToFile(* itBrain );
             std::string brain_name_str = "";
@@ -305,15 +312,8 @@ bool Game::iterateOnce(bool saveToFile) {
 
             std::cout << std::endl << "Brain saved on file: " << brain_name_str << std::endl;
             itBrain_.saveNetworkToFile(brain_name_str);
-            // itBrain_.copyNetwork(*itBrain);
-        }
-        
-        // do crossover with CROSSOVER_PROBABILITY and LEARNING_RATE to repopulate neural network container
-       
-        // std::cout << "snake file saved" << std::endl;
-
+        }       
     }
-    // NeuralNetwork::NetworkContainer * n_container;
 
     if ( max_index != -1 && saveToFile) {
         nextSnakeContainer == nullptr;
@@ -327,11 +327,15 @@ bool Game::iterateOnce(bool saveToFile) {
 
         std::cout << "Mutating.." << std::endl; 
         nextSnakeContainer->mutateContainer(0.1, 0.1);
+
+        delete snakeContainer;
     }
 
     // deallocate snakes
     std::vector<SnakeGame::Snake>().swap(this->snakes);
-    delete snakeContainer;
+
+    
+    
     // delete best_snake_structs;
     // if (max_index != -1)
         // delete n_container;
@@ -469,5 +473,4 @@ void Game::spawnSingleSnakeAI(std::string brain_file_path) {
 
     snakes.push_back(singleSnake);
     
-    // iterateOnce();
 }

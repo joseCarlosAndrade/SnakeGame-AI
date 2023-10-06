@@ -205,6 +205,8 @@ SnakeGame::SnakeState SnakeGame::Snake::checkCollision() {
             y = std::rand() % this->maxH;
         } while (isCollidingBody(x, y));
         thisFood->setPosition(x, y);
+
+        return SnakeGame::GROWING;
     }
 
     // if head touched its body
@@ -314,6 +316,16 @@ void SnakeGame::Snake::takeDecision() {
     }
 
 }
+
+
+uint32_t SnakeGame::Snake::getSnakeTimer() {
+    return this->snakeTimer;
+}
+
+void SnakeGame::Snake::setSnakeTimer(uint32_t timer) {
+    this->snakeTimer = timer;
+}
+
 
 
 // ifood
