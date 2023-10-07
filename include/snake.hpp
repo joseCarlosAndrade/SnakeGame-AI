@@ -82,6 +82,8 @@ namespace SnakeGame
             void addSnake();
             void changeAllStates();
             
+            int getSize();
+
             SnakeState checkCollision();
             SnakeState checkCollision(SnakeGame::Food *food);
 

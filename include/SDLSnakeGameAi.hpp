@@ -58,6 +58,10 @@ class Game {
 
         SnakeGame::SNAKE_VIEW_AREA snake_view; // odd number that represents the size of the area that the snake can view
 
+        float mutationChance; // chance of happening mutation
+
+        float maxMutationChange; // max value of mutation change (in absolute value)
+
         std::map<int , SnakeGame::Direction> directionMap; // map that translate the neural network ouput to snake directions
 
         unsigned int bestSnakesNumber; // number of snakes to be chosen as best players on each iteration 
@@ -69,6 +73,10 @@ class Game {
         std::string lastBrain; // path to the last brain saved
 
         std::string pathToSave; // path to save current brain
+
+        NeuralNetwork::SingleNetwork lastBestNetwork;
+
+        int lastBestFitness;
         
     
     public:
@@ -101,7 +109,7 @@ class Game {
         /* Plays the game! It uses the specified settings so far, such as snake numbers,
         max iteration count, crossover type, mutation and so on.
         Please make sure to specify a maximum iteration count before calling this method. */
-        void playGame(uint n_snakes );
+        void playGame(uint n_snakes, float mutation_f, float max_change);
 
         int calculateFps(); // TODO: FIX THIS IT DOESNT MAKE ANY SENSE AND ITS CLEARLY NOT WORKING PROPERLY
 

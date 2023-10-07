@@ -25,6 +25,8 @@ Game::Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh,
 
         nextSnakeContainer = nullptr;
 
+        lastBestFitnes = -1;
+
         // intializing game attributes
         running = 1;
         stopSimulation = false;
@@ -42,6 +44,9 @@ Game::Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh,
 
         universal_s = (int) 5*width/(6*w_squares-1);
 
+        // defining default mutation rates
+        maxMutationChange = 0.1;
+        mutationChance = 0.1;
 
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std::cout << "Failed to initialize sdl2" << std::endl;
         
@@ -178,7 +183,7 @@ void Game::updateSnakes() {
 
                 // timeout for each snake
                 Uint32 timePassed = nowTimer - snake->getSnakeTimer();
-                if( (timePassed)>= SNAKE_TIMEOUT*1000 && timePassed <SNAKE_TIMEOUT*10000) {
+                if( (timePassed)>= (SNAKE_TIMEOUT+snake->getSize())*1000 && timePassed <SNAKE_TIMEOUT*10000) {
                     snake->state = SnakeGame::DEAD;
                     // std::cout << "Snake died due to timeout : " << (nowTimer - snake->getSnakeTimer())/1000 << std::endl;
                 }
@@ -189,10 +194,7 @@ void Game::updateSnakes() {
                     snake->changeAllStates();
                 }
             }
-
-        }   
-
-   
+        }    
 }
 
 // main loop for one round
@@ -210,11 +212,11 @@ bool Game::iterateOnce(bool saveToFile) {
      <<std::endl << std::endl;
 
     while(running) {
-        if (SDL_GetTicks() >= gameUniversalTimer+(100*1000)) {
-            std::cout << "Iteration timeout. " << std::endl;
-            running =false;
-            break;
-        }
+        // if (SDL_GetTicks() >= gameUniversalTimer+(100*1000)) {
+        //     std::cout << "Iteration timeout. " << std::endl;
+        //     running =false;
+        //     break;
+        // }
         if(stopSimulation) {
             running =false;
             return false;
@@ -328,10 +330,19 @@ bool Game::iterateOnce(bool saveToFile) {
 
         std::cout << "Doing crossover.. " << std::endl;
 
-        snakeContainer->doCrossover(itBrain_, nextSnakeContainer, NeuralNetwork::AVERAGE);
+        if (max_fitness > lastBestFitness) {
+            snakeContainer->doCrossover(itBrain_, nextSnakeContainer, NeuralNetwork::AVERAGE);
+            lastBestFitness = max_fitness;
+            lastBestNetwork.copyNetwork(itBrain_);
+        }
+
+        else {
+            std::cout << "New fitness above last score.. Using last best brain. " << std::endl;
+            snakeContainer->doCrossover(lastBestNetwork, nextSnakeContainer, NeuralNetwork::AVERAGE);
+        }
 
         std::cout << "Mutating.." << std::endl; 
-        nextSnakeContainer->mutateContainer(0.1, 0.1);
+        nextSnakeContainer->mutateContainer(mutationChance, maxMutationChange);
 
         delete snakeContainer;
     }
@@ -344,14 +355,31 @@ bool Game::iterateOnce(bool saveToFile) {
     return true;
 }
 
-void Game::playGame(uint n_snakes ) {
+void Game::playGame(uint n_snakes, float mutation_f, float max_change ) {
+    mutationChance = mutation_f;
+    maxMutationChange = max_change;
+
+    std::cout << std::endl << "---> INITIALIZING GAME! :) <---" << std::endl << std::endl <<
+
+    "Total of snakes: " << n_snakes << std::endl <<
+    "Iterations: " << maxIterations << std::endl <<
+    "Mutation chance (percentage of nodes that will mutate): " << mutationChance << std::endl <<
+    "Maximum mutation change (absolute): " << maxMutationChange << std::endl << std::endl <<
+
+    "Usefull tools:" << std::endl <<
+    "Press S to skip the current iteration (and save temp brain)." << std::endl <<
+    "Press Esc to end game (won't save anything more)." << std::endl << std::endl <<
+
+    "Press Enter key to start!" << std::endl;
+
+    char a;
+    a =getchar();
 
     for (int i =0; i < maxIterations; i ++) {
         initSnakes(n_snakes);
         if(!iterateOnce(true)) break;
     }
 }
-
 
 int Game::calculateFps() {
     lastFrame = SDL_GetTicks();

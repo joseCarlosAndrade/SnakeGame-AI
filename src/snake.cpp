@@ -99,6 +99,10 @@ void SnakeGame::Snake::moveAllSnakes() {
 
 }
 
+int SnakeGame::Snake::getSize() {
+    return size;
+}
+
 // moves the part one block at direction && handles wall collision
 void SnakeGame::Snake::moveSnake() {
     switch (this->snakeDirection)
