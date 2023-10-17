@@ -12,11 +12,22 @@
 #include<fstream>
 
 
-Game::Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
-        unsigned int best_snake_number, int g_height, int g_width,
-         int gw_squares, int gh_squares) 
-    :  height(g_height), width(g_width), w_squares(gw_squares), h_squares(gh_squares), 
-    snake_view(view), behavior(bh), bestSnakesNumber(best_snake_number)
+Game::Game(
+        SnakeGame::SNAKE_VIEW_AREA view, 
+        snake_behavior bh, 
+        unsigned int best_snake_number, 
+        int g_height, 
+        int g_width,
+        int gw_squares, 
+        int gh_squares) 
+    :  
+    height(g_height), 
+    width(g_width), 
+    w_squares(gw_squares), 
+    h_squares(gh_squares), 
+    snake_view(view), 
+    behavior(bh), 
+    bestSnakesNumber(best_snake_number)
     {
         iterationCount = 0;
         maxIterations = 1; // set a max value by default
@@ -25,7 +36,7 @@ Game::Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh,
 
         nextSnakeContainer = nullptr;
 
-        lastBestFitnes = -1;
+        lastBestFitness = -1;
 
         // intializing game attributes
         running = 1;

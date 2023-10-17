@@ -2,6 +2,26 @@
 #include<fstream>
 #include<iostream>
 
+// NeuralNetwork::SingleNetwork::SingleNetwork() {
+
+// }
+
+NeuralNetwork::SingleNetwork::SingleNetwork(const int n_inputs, const int n_outputs, bool random) :   
+            _n_input(n_inputs),
+            _n_output(n_outputs)
+        {
+            thisFitness = 0;
+
+            if (random) {
+                _w0 = Eigen::MatrixXf::Random(n_outputs, n_inputs)*2; // generates random values between -2 and 2
+                _b0 = Eigen::MatrixXf::Random(n_outputs, 1)*2;
+            }
+            else {
+                _w0.setOnes();
+                _b0.setOnes(); 
+            }
+        }
+
 // Calculate output from input eigen::matrix 
 Eigen::MatrixXf NeuralNetwork::SingleNetwork::calculateOutput(Eigen::MatrixXf input) {
     Eigen::MatrixXf output(this->_n_output, 1);

@@ -32,31 +32,17 @@ typedef unsigned int CONTAINER_SIZE; // Defines the size of neural network conta
  */
 class SingleNetwork {
     private:
-        const int _n_input, _n_output;
+        int _n_input, _n_output;
         Eigen::MatrixXf _w0, _b0;
         fitness_value thisFitness; // This neural network fitness value
     
     public:
         
-        SingleNetwork() ;
+        SingleNetwork() {} // apparently i have to define this default constructor even if its not used
 
         /* Initializes a single network with the given input and output numbers. If the matrices won't 
         be loaded ou defined externaly, use random=true to initialize it with random values between -2,2. */
-        SingleNetwork(const int n_inputs, const int n_outputs, bool random=true) :   
-            _n_input(n_inputs),
-            _n_output(n_outputs)
-        {
-            thisFitness = 0;
-
-            if (random) {
-                _w0 = Eigen::MatrixXf::Random(n_outputs, n_inputs)*2; // generates random values between -2 and 2
-                _b0 = Eigen::MatrixXf::Random(n_outputs, 1)*2;
-            }
-            else {
-                _w0.setOnes();
-                _b0.setOnes(); 
-            }
-        }
+        SingleNetwork(const int n_inputs, const int n_outputs, bool random=true);
 
         /* Returns an Eigen::Matrix as output given for the given input matrix of the same type. Note: It has to match the 
         number of inputs and outputs defined on the network. */

@@ -80,8 +80,15 @@ class Game {
         
     
     public:
-        Game(SnakeGame::SNAKE_VIEW_AREA view, snake_behavior bh, 
-        unsigned int best_snake_number =1, int g_height = 500, int g_width = 500, int gw_squares = 25, int gh_squares = 25) ;
+        Game(
+            SnakeGame::SNAKE_VIEW_AREA view, 
+            snake_behavior bh, 
+            unsigned int best_snake_number =1, 
+            int g_height = 500, 
+            int g_width = 500, 
+            int gw_squares = 25, 
+            int gh_squares = 25) ;
+            
         ~Game();
 
         void setMaxIterations(int iterations);
