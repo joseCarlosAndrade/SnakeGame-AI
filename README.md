@@ -1,11 +1,11 @@
 # SnakeGame-AI
 
 <div align="center" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-  <img src="assets/1.png" alt="SnakeGame-AI screenshot 1" width="180" />
-  <img src="assets/2.png" alt="SnakeGame-AI screenshot 2" width="180" />
-  <img src="assets/3.png" alt="SnakeGame-AI screenshot 3" width="180" />
-  <img src="assets/4.png" alt="SnakeGame-AI screenshot 4" width="180" />
-  <img src="assets/5.png" alt="SnakeGame-AI screenshot 5" width="180" />
+  <img src="assets/1.png" alt="SnakeGame-AI screenshot 1" width="210" />
+  <img src="assets/2.png" alt="SnakeGame-AI screenshot 2" width="210" />
+  <img src="assets/3.png" alt="SnakeGame-AI screenshot 3" width="210" />
+  <img src="assets/4.png" alt="SnakeGame-AI screenshot 4" width="210" />
+  <img src="assets/5.png" alt="SnakeGame-AI screenshot 5" width="210" />
 </div>
 
 A C++ project to train neural networks using a genetic algorithm in the Snake game.
