@@ -348,7 +348,7 @@ bool Game::iterateOnce(bool saveToFile) {
         }
 
         else {
-            std::cout << "New fitness above last score.. Using last best brain. " << std::endl;
+            std::cout << "New fitness below last score.. Using last best brain. " << std::endl;
             snakeContainer->doCrossover(lastBestNetwork, nextSnakeContainer, NeuralNetwork::AVERAGE);
         }
 

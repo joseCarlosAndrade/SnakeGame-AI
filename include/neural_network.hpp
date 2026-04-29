@@ -82,7 +82,12 @@ class SingleNetwork {
 
         /* Sum operation between networks. */
         SingleNetwork operator+(SingleNetwork op) {
-            assert(op._n_input == _n_input && op._n_output == _n_output);
+            if (op._n_input != _n_input || op._n_output != _n_output) {
+                std::cout << "ERROR: asserstion failed for + operator" << std::endl;
+                std::cout << "op input & output: " << op._n_input <<" " << op._n_output << std::endl;
+                std::cout << "this input & output: " << _n_input << " " << _n_output << std::endl;
+                exit(EXIT_FAILURE);
+            }
 
             SingleNetwork single (_n_input, _n_output);
 
@@ -201,10 +206,12 @@ class NetworkContainer {
             }
             // to be implemented yet
             else if (type == NeuralNetwork::AVERAGE_NEAR_BEST) {
-
+                std::cout << "average near best is not yet implemented\n";
+                exit(EXIT_FAILURE);
             }
             else if(type == NeuralNetwork::UNIFORM_CROSSOVER) {
-
+                std::cout << "average near best is not yet implemented\n";
+                exit(EXIT_FAILURE);
             }
             
 

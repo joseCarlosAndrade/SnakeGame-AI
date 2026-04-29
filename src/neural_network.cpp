@@ -72,6 +72,9 @@ Eigen::MatrixXf& NeuralNetwork::SingleNetwork::getB() {
 }
 
 void NeuralNetwork::SingleNetwork::copyNetwork(NeuralNetwork::SingleNetwork n_network) {
+    this->_n_input = n_network._n_input;
+    this->_n_output = n_network._n_output;
+    
     _w0 = n_network.getW();
     _b0 = n_network.getB();
 }

@@ -1,9 +1,11 @@
 CPP_FLAGS=-ggdb -Wall -Werror -Wextra
 
 all: game/training.cpp neural_network.o SDLSnakeGameAi.o snake.o 
+	mkdir -p bin/
 	g++ -o bin/mainGame game/training.cpp bin/*.o -lSDL2 $(CPP_FLAGS)
 
 debug: game/game.cpp neural_network.o SDLSnakeGameAi.o snake.o 
+	mkdir -p bin/
 	g++ -o bin/debug game/game.cpp bin/*.o -lSDL2 $(CPP_FLAGS)
 
 neural_network.o: src/neural_network.cpp include/neural_network.hpp
@@ -25,4 +27,4 @@ game_t: game/game.cpp src/neural_network.cpp src/SDLSnakeGameAi.cpp src/snake.cp
 
 
 run_game: 
-	./bin/mainGame
+	./bin/mainGame 300 40 0.2 0.3

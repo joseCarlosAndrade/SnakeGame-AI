@@ -7,7 +7,8 @@ int main(int argc, char ** argv) {
 
     if (argc < 2) { 
         // default brain
-        std::cout << "usage: \n./bin/mainGame {number of snakes} {n of iterations (optional)} {mut factor (optional)} {max change (optional)}" <<std::endl;
+        std::cout << "Incorrect arguments. Usage: \n./bin/mainGame {number of snakes} {n of iterations (optional)} {mut factor (optional)} {max change (optional)}" <<std::endl;
+        std::cout << "example: \n./bin/mainGame 300 50 0.2 0.5" << std::endl;
         exit(1);
     }
     else if (argc >= 2) {
