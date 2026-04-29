@@ -19,12 +19,13 @@ snake.o: src/snake.cpp include/snake.hpp
 
 game: game/game.cpp src/neural_network.cpp src/SDLSnakeGameAi.cpp src/snake.cpp include/neural_network.hpp include/SDLSnakeGameAi.hpp include/snake.hpp
 	mkdir -p bin/
-	g++ -o bin/mainGame game/game.cpp src/*.cpp -lSDL2
+	g++ -o bin/play game/game.cpp src/*.cpp -lSDL2
 
 game_t: game/game.cpp src/neural_network.cpp src/SDLSnakeGameAi.cpp src/snake.cpp include/neural_network.hpp include/SDLSnakeGameAi.hpp include/snake.hpp
 	mkdir -p bin/
 	g++ -o bin/mainGame_t game/game.cpp src/*.cpp -lSDL2
 
 
-run_game: 
+run_training: 
 	./bin/mainGame 300 40 0.2 0.3
+

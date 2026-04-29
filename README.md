@@ -78,14 +78,23 @@ cd vcpkg
 ### Linux/macOS
 
 ```bash
-# Build the game
-make game
 
 # Or run with training
 make all
 
 # Run the game
-./bin/mainGame
+./bin/mainGame {number of snakes} {n of iterations (optional)} {mut factor (optional)} {max change (optional)}
+
+# ex:
+./bin/mainGame 300 50 0.2 0.5
+
+#or make run game for default values
+make run_training
+
+# for playing with a trained brain, move the brain to the data/final folder and:
+make game
+./bin/play "path to the brain file"
+
 ```
 
 ### Windows
